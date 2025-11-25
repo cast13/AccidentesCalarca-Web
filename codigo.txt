@@ -1,0 +1,44 @@
+import requests
+import pandas as pd
+import pyodbc
+
+# ==========================
+# 1. CONFIGURACIÓN GENERAL
+# ==========================
+
+DATASET_ID = "wacd-xkg8"
+URL = f"https://www.datos.gov.co/resource/{DATASET_ID}.json"
+LIMIT = 50000
+
+SERVER = r"DESKTOP-C0SG086\SQLEXPRESS"
+DATABASE = "AccidentesColombiaDB"
+USER = "sa"
+PASSWORD = "123456"
+
+# DESCARGA API
+response = requests.get(URL, params={"$limit": LIMIT})
+df = pd.DataFrame(response.json())
+
+# LIMPIEZA Y TRANSFORMACIÓN
+df.columns = [c.lower().strip() for c in df.columns]
+df["municipio"] = "CALARCÁ"
+
+# CONEXIÓN SQL
+conn = pyodbc.connect(
+    "DRIVER={ODBC Driver 18 for SQL Server};"
+    f"SERVER={SERVER};DATABASE={DATABASE};UID={USER};PWD={PASSWORD};"
+    "TrustServerCertificate=yes;"
+)
+cursor = conn.cursor()
+
+# CREAR TABLA SI NO EXISTE
+cursor.execute("""CREATE TABLE IF NOT EXISTS dbo.Accidentes2017_2022 (...);""")
+
+# INSERTAR DATOS
+for _, row in df.iterrows():
+    cursor.execute("INSERT INTO dbo.Accidentes2017_2022 VALUES (...)", ...)
+
+conn.commit()
+conn.close()
+
+print("Proceso completado.")
