@@ -1,33 +1,46 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Accidentes en Calarcá 2017–2022</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Accidentes Calarcá 2017–2022 | Proyecto de Ingeniería</title>
 
+<!-- Estilos generales -->
 <style>
     body {
         margin: 0;
         font-family: "Segoe UI", Arial, sans-serif;
-        background: linear-gradient(180deg, #e8f1ff 0%, #ffffff 100%);
+        background: #f1f5fb;
         color: #1b2a4e;
     }
 
-    header {
+    /* ----- NAVBAR ----- */
+    nav {
         background: #112a5a;
-        padding: 30px 20px;
-        text-align: center;
+        padding: 15px 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         color: white;
-        box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
     }
-
-    header h1 {
+    nav h2 {
         margin: 0;
-        font-size: 32px;
-        letter-spacing: 1px;
-        font-weight: 600;
+        font-size: 22px;
+    }
+    nav a {
+        color: white;
+        text-decoration: none;
+        margin-left: 20px;
+        font-size: 18px;
+    }
+    nav a:hover {
+        text-decoration: underline;
     }
 
+    /* ----- CONTENEDOR ----- */
     .container {
         max-width: 1100px;
         margin: auto;
@@ -38,8 +51,8 @@
         background: white;
         padding: 25px;
         border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         margin-bottom: 30px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 
     h2 {
@@ -49,91 +62,157 @@
     }
 
     p {
-        line-height: 1.6;
         font-size: 17px;
+        line-height: 1.6;
     }
 
     iframe {
         width: 100%;
         height: 850px;
         border: none;
-        border-radius: 12px;
+        border-radius: 10px;
         box-shadow: 0 3px 10px rgba(0,0,0,0.15);
     }
 
-    .btn-container {
-        margin-top: 20px;
-        text-align: center;
-    }
-
+    /* ----- BOTÓN ----- */
     .btn {
         background: #0d6efd;
         color: white;
-        padding: 14px 28px;
+        padding: 14px 26px;
         border-radius: 8px;
         text-decoration: none;
-        font-size: 18px;
+        font-size: 17px;
+        display: inline-block;
+        margin-top: 15px;
         transition: 0.3s;
-        box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    }
+    .btn:hover {
+        background: #0b56c4;
     }
 
-    .btn:hover {
-        background: #084dbf;
+    /* ----- CAJA DE CÓDIGO ----- */
+    pre {
+        background: #0d1117;
+        color: #e6edf3;
+        padding: 20px;
+        border-radius: 10px;
+        overflow-x: auto;
+        font-size: 14px;
+        line-height: 1.5;
+        border: 1px solid #30363d;
     }
 
     footer {
-        background: #112a5a;
-        padding: 12px;
         text-align: center;
+        padding: 20px;
+        background: #112a5a;
         color: white;
-        margin-top: 30px;
+        margin-top: 40px;
     }
 </style>
-
 </head>
+
 <body>
 
-<header>
-    <h1>Dashboard de Accidentes de Tránsito — Calarcá 2017–2022</h1>
-</header>
+<!-- NAVBAR -->
+<nav>
+    <h2>Accidentes Calarcá</h2>
+    <div>
+        <a href="#proyecto">Proyecto</a>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#codigo">Código</a>
+        <a href="https://github.com/cast13/AccidentesCalarca-Web" target="_blank">GitHub</a>
+    </div>
+</nav>
 
 <div class="container">
 
-    <div class="card">
-        <h2>Resumen del Proyecto</h2>
+    <!-- DESCRIPCIÓN DEL PROYECTO -->
+    <div class="card" id="proyecto">
+        <h2>Descripción del Proyecto</h2>
         <p>
-            Este panel interactivo analiza los accidentes de tránsito registrados en el municipio de 
-            <strong>Calarcá, Quindío</strong> entre los años <strong>2017 y 2022</strong>.  
-            Incluye estadísticas por gravedad, día de la semana, mes, año, municipio y más.
+            Proyecto académico de <strong>Ingeniería de Sistemas — Transmisión de Datos</strong> 
+            basado en la descarga, transformación, almacenamiento, análisis y visualización
+            del dataset oficial <strong>Accidentes de Tránsito 2017–2022 en Calarcá</strong>.
             <br><br>
-            El objetivo es ofrecer una herramienta visual y analítica que permita interpretar el 
-            comportamiento de los siniestros viales, apoyar la toma de decisiones y proponer estrategias 
-            de prevención basadas en datos oficiales del portal <strong>Datos.gov.co</strong>.
+            Se utiliza:
+            <br>✔ Python (API + ETL + limpieza)
+            <br>✔ SQL Server (base de datos)
+            <br>✔ Power BI (observabilidad)
+            <br>✔ GitHub Pages (publicación web)
         </p>
-
-        <div class="btn-container">
-            <a href="https://github.com/cast13/AccidentesCalarca-Web" class="btn" target="_blank">
-                Ver repositorio en GitHub
-            </a>
-        </div>
     </div>
 
-    <div class="card">
+    <!-- DASHBOARD -->
+    <div class="card" id="dashboard">
         <h2>Dashboard Interactivo</h2>
 
-        <!-- 🔵 DASHBOARD POWER BI (EL FINAL, FUNCIONAL) -->
         <iframe 
             title="Dashboard Accidentes Calarcá 2017-2022"
             src="https://app.powerbi.com/reportEmbed?reportId=b20bb08b-1182-4258-b6ba-ab7ab6d9c5be&autoAuth=true&ctid=4f1e044d-3d70-4990-b26a-b95f0c642e1a"
             allowFullScreen="true">
         </iframe>
+    </div>
 
+    <!-- CÓDIGO PYTHON -->
+    <div class="card" id="codigo">
+        <h2>Código Completo (ETL + API + SQL)</h2>
+        <p>Este es el código del proceso completo desarrollado en Visual Studio Code:</p>
+
+        <pre>
+import requests
+import pandas as pd
+import pyodbc
+
+# ==========================
+# 1. CONFIGURACIÓN GENERAL
+# ==========================
+
+DATASET_ID = "wacd-xkg8"
+URL = f"https://www.datos.gov.co/resource/{DATASET_ID}.json"
+LIMIT = 50000
+
+SERVER = r"DESKTOP-C0SG086\SQLEXPRESS"
+DATABASE = "AccidentesColombiaDB"
+USER = "sa"
+PASSWORD = "123456"
+
+# DESCARGA API
+response = requests.get(URL, params={"$limit": LIMIT})
+df = pd.DataFrame(response.json())
+
+# LIMPIEZA Y TRANSFORMACIÓN
+df.columns = [c.lower().strip() for c in df.columns]
+df["municipio"] = "CALARCÁ"
+
+# CONEXIÓN SQL
+conn = pyodbc.connect(
+    "DRIVER={ODBC Driver 18 for SQL Server};"
+    f"SERVER={SERVER};DATABASE={DATABASE};UID={USER};PWD={PASSWORD};"
+    "TrustServerCertificate=yes;"
+)
+cursor = conn.cursor()
+
+# CREAR TABLA SI NO EXISTE
+cursor.execute("""CREATE TABLE IF NOT EXISTS dbo.Accidentes2017_2022 (...);""")
+
+# INSERTAR DATOS
+for _, row in df.iterrows():
+    cursor.execute("INSERT INTO dbo.Accidentes2017_2022 VALUES (...)", ...)
+
+conn.commit()
+conn.close()
+
+print("Proceso completado.")
+        </pre>
+
+        <a class="btn" href="codigo.txt" download>Descargar código completo</a>
     </div>
 
 </div>
 
 <footer>
-    © 2025 - Proyecto de Análisis de Datos | Accidentes en Calarcá
+    © 2025 - Proyecto de Ingeniería | Accidentes de Tránsito en Calarcá
 </footer>
 
 </body>
