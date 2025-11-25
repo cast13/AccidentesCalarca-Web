@@ -6,39 +6,223 @@ import pyodbc
 # 1. CONFIGURACIÓN GENERAL
 # ==========================
 
-DATASET_ID = "wacd-xkg8"
+DATASET_ID = "wacd-xkg8"  # Accidents 2017-2022
 URL = f"https://www.datos.gov.co/resource/{DATASET_ID}.json"
-LIMIT = 50000
+LIMIT = 50000  # ajusta si quieres más/menos
 
-SERVER = r"DESKTOP-C0SG086\SQLEXPRESS"
+# Configuración conexión SQL Server
+SERVER = r"DESKTOP-C0SG086\SQLEXPRESS"  # AJUSTA SI TU SERVIDOR ES OTRO
 DATABASE = "AccidentesColombiaDB"
-USER = "sa"
-PASSWORD = "123456"
+USER = "sa"           # tu usuario
+PASSWORD = "123456"   # tu contraseña
 
-# DESCARGA API
-response = requests.get(URL, params={"$limit": LIMIT})
-df = pd.DataFrame(response.json())
+# ==========================
+# 2. DESCARGA DESDE LA API
+# ==========================
 
-# LIMPIEZA Y TRANSFORMACIÓN
+print("Descargando datos desde la API...")
+params = {"$limit": LIMIT}
+response = requests.get(URL, params=params)
+
+if response.status_code != 200:
+    print("Respuesta de la API:", response.text)
+    raise Exception("Error al obtener datos de la API")
+
+data = response.json()
+df = pd.DataFrame(data)
+print("Registros descargados:", len(df))
+
+if df.empty:
+    raise Exception("No se obtuvieron registros desde la API")
+
+
+# ==========================
+# 3. LIMPIEZA Y TRANSFORMACIÓN
+# ==========================
+
+# Normalizar nombres de columnas
 df.columns = [c.lower().strip() for c in df.columns]
+
+# Ver qué columnas tenemos (útil para depurar)
+print("Columnas obtenidas del dataset:", df.columns.tolist())
+
+# Convertir tipos esperados (si no existen, se ignoran)
+if "orden" in df.columns:
+    df["orden"] = pd.to_numeric(df["orden"], errors="coerce")
+
+if "ipat" not in df.columns:
+    df["ipat"] = None  # columna dummy si no existe
+
+if "fecha" in df.columns:
+    df["fecha"] = pd.to_datetime(df["fecha"], errors="coerce")
+    df["anio"] = df["fecha"].dt.year
+    df["mes"] = df["fecha"].dt.month
+else:
+    # Si no viene la fecha, tratamos de usar columnas de año/mes si existen
+    if "a_o" in df.columns:
+        df["anio"] = pd.to_numeric(df["a_o"], errors="coerce")
+    if "mes" in df.columns:
+        df["mes"] = pd.to_numeric(df["mes"], errors="coerce")
+    df["fecha"] = None
+
+if "dia" not in df.columns:
+    df["dia"] = "SIN_DATO"
+
+if "gravedad" not in df.columns:
+    df["gravedad"] = "SIN_DATO"
+
+# Rellenar textos nulos
+text_cols = df.select_dtypes(include="object").columns
+df[text_cols] = df[text_cols].fillna("SIN_DATO")
+
+# 🔹 Enfocamos el proyecto en Calarcá: añadimos columna Municipio = 'CALARCÁ'
 df["municipio"] = "CALARCÁ"
 
-# CONEXIÓN SQL
-conn = pyodbc.connect(
+print("Primeras filas luego de limpiar:")
+print(df.head())
+
+
+# ==========================
+# 4. CONEXIÓN A SQL SERVER
+# ==========================
+
+print("\nConectando a SQL Server...")
+conn_str = (
     "DRIVER={ODBC Driver 18 for SQL Server};"
-    f"SERVER={SERVER};DATABASE={DATABASE};UID={USER};PWD={PASSWORD};"
+    f"SERVER={SERVER};"
+    f"DATABASE={DATABASE};"
+    f"UID={USER};"
+    f"PWD={PASSWORD};"
     "TrustServerCertificate=yes;"
 )
+conn = pyodbc.connect(conn_str)
 cursor = conn.cursor()
+print("Conexión exitosa a SQL Server.")
 
-# CREAR TABLA SI NO EXISTE
-cursor.execute("""CREATE TABLE IF NOT EXISTS dbo.Accidentes2017_2022 (...);""")
 
-# INSERTAR DATOS
+# ==========================
+# 5. CREACIÓN DE BD/TABLA (SI NO EXISTE)
+# ==========================
+
+# Asegurar que estamos usando la BD correcta
+cursor.execute(f"IF DB_ID('{DATABASE}') IS NULL CREATE DATABASE {DATABASE};")
+cursor.execute(f"USE {DATABASE};")
+
+# Crear tabla si no existe
+create_table_sql = """
+IF OBJECT_ID('dbo.Accidentes2017_2022', 'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Accidentes2017_2022 (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        Orden INT NULL,
+        Ipat NVARCHAR(50) NULL,
+        Fecha DATE NULL,
+        Anio INT NULL,
+        Mes INT NULL,
+        Dia NVARCHAR(50) NULL,
+        Gravedad NVARCHAR(50) NULL,
+        Municipio NVARCHAR(100) NULL,
+        FechaCarga DATETIME DEFAULT GETDATE()
+    );
+END
+"""
+cursor.execute(create_table_sql)
+conn.commit()
+
+# Asegurar que la columna Municipio existe (por si la tabla era antigua)
+alter_municipio_sql = """
+IF COL_LENGTH('dbo.Accidentes2017_2022', 'Municipio') IS NULL
+BEGIN
+    ALTER TABLE dbo.Accidentes2017_2022
+    ADD Municipio NVARCHAR(100) NULL;
+END
+"""
+cursor.execute(alter_municipio_sql)
+conn.commit()
+
+print("Tabla Accidentes2017_2022 lista para usar.")
+
+
+# ==========================
+# 6. INSERTAR DATOS
+# ==========================
+
+insert_sql = """
+INSERT INTO dbo.Accidentes2017_2022
+(Orden, Ipat, Fecha, Anio, Mes, Dia, Gravedad, Municipio)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+"""
+
+print("Insertando registros en SQL Server...")
+insertados = 0
+
 for _, row in df.iterrows():
-    cursor.execute("INSERT INTO dbo.Accidentes2017_2022 VALUES (...)", ...)
+    cursor.execute(
+        insert_sql,
+        row.get("orden"),
+        row.get("ipat"),
+        row.get("fecha"),
+        row.get("anio"),
+        row.get("mes"),
+        row.get("dia"),
+        row.get("gravedad"),
+        row.get("municipio")
+    )
+    insertados += 1
 
 conn.commit()
-conn.close()
+print(f"Registros insertados en la tabla: {insertados}")
 
-print("Proceso completado.")
+
+# ==========================
+# 7. CONSULTAS DE NEGOCIO
+# ==========================
+
+consultas = {
+    "Accidentes_por_anio_Calarca": """
+        SELECT Anio, COUNT(*) AS TotalAccidentes
+        FROM dbo.Accidentes2017_2022
+        WHERE Municipio = 'CALARCÁ'
+        GROUP BY Anio
+        ORDER BY Anio;
+    """,
+    "Accidentes_por_gravedad_Calarca": """
+        SELECT Gravedad, COUNT(*) AS TotalAccidentes
+        FROM dbo.Accidentes2017_2022
+        WHERE Municipio = 'CALARCÁ'
+        GROUP BY Gravedad
+        ORDER BY TotalAccidentes DESC;
+    """,
+    "Accidentes_por_mes_Calarca": """
+        SELECT Mes, COUNT(*) AS TotalAccidentes
+        FROM dbo.Accidentes2017_2022
+        WHERE Municipio = 'CALARCÁ'
+        GROUP BY Mes
+        ORDER BY Mes;
+    """,
+    "Accidentes_por_dia_Calarca": """
+        SELECT Dia, COUNT(*) AS TotalAccidentes
+        FROM dbo.Accidentes2017_2022
+        WHERE Municipio = 'CALARCÁ'
+        GROUP BY Dia
+        ORDER BY TotalAccidentes DESC;
+    """,
+    "Accidentes_por_anio_y_gravedad_Calarca": """
+        SELECT Anio, Gravedad, COUNT(*) AS TotalAccidentes
+        FROM dbo.Accidentes2017_2022
+        WHERE Municipio = 'CALARCÁ'
+        GROUP BY Anio, Gravedad
+        ORDER BY Anio, Gravedad;
+    """
+}
+
+print("\n================ RESULTADOS CONSULTAS ================")
+for nombre, query in consultas.items():
+    print(f"\n--- {nombre} ---")
+    df_res = pd.read_sql(query, conn)
+    print(df_res)
+
+conn.close()
+print("\nProceso completo finalizado.")
+
+
