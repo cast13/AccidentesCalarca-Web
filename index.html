@@ -3,81 +3,138 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Accidentes Calarcá 2017-2022</title>
+<title>Dashboard Accidentes en Calarcá 2017–2022</title>
+
 <style>
-body{
-    font-family: 'Segoe UI', sans-serif;
-    margin:0;
-    background:#E9F1FA;
-    color:#0A2647;
-}
-.header{
-    background:#0A2647;
-    padding:40px;
-    text-align:center;
-    color:white;
-}
-.container{
-    max-width:1000px;
-    margin:40px auto;
-    background:white;
-    padding:30px;
-    border-radius:20px;
-    box-shadow:0 4px 20px rgba(0,0,0,0.1);
-}
-.btn{
-    display:inline-block;
-    background:#144272;
-    color:white;
-    padding:15px 25px;
-    border-radius:10px;
-    text-decoration:none;
-    font-size:18px;
-    margin-top:20px;
-}
-.footer{
-    text-align:center;
-    padding:20px;
-    color:#144272;
-}
+    body {
+        margin: 0;
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: linear-gradient(180deg, #e8f1ff 0%, #ffffff 100%);
+        color: #1b2a4e;
+    }
+
+    header {
+        background: #112a5a;
+        padding: 30px 20px;
+        text-align: center;
+        color: white;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 32px;
+        letter-spacing: 1px;
+        font-weight: 600;
+    }
+
+    .container {
+        max-width: 1100px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    .card {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+
+    h2 {
+        margin-top: 0;
+        font-size: 26px;
+        color: #102040;
+    }
+
+    p {
+        line-height: 1.6;
+        font-size: 17px;
+    }
+
+    iframe {
+        width: 100%;
+        height: 800px;
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    }
+
+    .btn-container {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .btn {
+        background: #0d6efd;
+        color: white;
+        padding: 14px 28px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 18px;
+        transition: 0.3s;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    }
+
+    .btn:hover {
+        background: #084dbf;
+    }
+
+    footer {
+        background: #112a5a;
+        padding: 12px;
+        text-align: center;
+        color: white;
+        margin-top: 30px;
+    }
 </style>
+
 </head>
 <body>
 
-<div class="header">
-    <h1>Dashboard de Accidentes en Calarcá 2017-2022</h1>
-</div>
+<header>
+    <h1>Dashboard de Accidentes de Tránsito — Calarcá 2017–2022</h1>
+</header>
 
 <div class="container">
-    <h2>Resumen del Proyecto</h2>
-    <p>
-        Este proyecto analiza la accidentalidad registrada en el municipio de Calarcá entre los años 2017 y 2022,
-        utilizando datos abiertos del portal <strong>datos.gov.co</strong>. El sistema integra:
-    </p>
-    <ul>
-        <li>Extracción de datos mediante API</li>
-        <li>Limpieza y transformación en Python</li>
-        <li>Almacenamiento en SQL Server</li>
-        <li>Visualización y análisis en Power BI</li>
-    </ul>
 
-    <h2>Dashboard Interactivo</h2>
-    <p>Puedes acceder al tablero completo en el siguiente enlace:</p>
+    <div class="card">
+        <h2>Resumen del Proyecto</h2>
+        <p>
+            Este panel interactivo analiza los accidentes de tránsito registrados en el municipio de 
+            <strong>Calarcá, Quindío</strong> entre los años <strong>2017 y 2022</strong>.  
+            Incluye estadísticas por gravedad, día de la semana, mes, año, municipio y más.
+            <br><br>
+            El objetivo es ofrecer una herramienta visual y analítica que permita interpretar el 
+            comportamiento de los siniestros viales, apoyar la toma de decisiones y proponer estrategias 
+            de prevención basadas en datos oficiales del portal <strong>Datos.gov.co</strong>.
+        </p>
 
-    <a class="btn" href="YOUR_POWERBI_URL" target="_blank">Ver Dashboard</a>
+        <div class="btn-container">
+            <a href="https://github.com/cast13/AccidentesCalarca-Web" class="btn" target="_blank">
+                Ver repositorio en GitHub
+            </a>
+        </div>
+    </div>
 
-    <h2>Código Fuente</h2>
-    <p>
-        El código del proyecto, incluyendo scripts de Python, SQL y documentación,
-        está disponible en GitHub.
-    </p>
+    <div class="card">
+        <h2>Dashboard Interactivo</h2>
 
-    <a class="btn" href="YOUR_GITHUB_URL" target="_blank">Ver Proyecto en GitHub</a>
+        <!-- 🔵 DASHBOARD POWER BI -->
+        <iframe 
+            title="Reporte de Accidentes Calarcá 2017-2022"
+            src="https://app.powerbi.com/view?r=eyJrIjoiNjgzMDBhZTYtYmRhMC00Nzg3LTk1MTMtMGY2MGJlZjJkYjRmIiwidCI6IjRmMWUwNDRkLTNkNzAtNDk5MC1iMjZhLWI5NWYwYzY0MmUxYSIsImMiOjR9"
+            allowFullScreen="true">
+        </iframe>
+    </div>
+
 </div>
 
-<div class="footer">
-    Proyecto desarrollado por Carlos Serrano © 2025
-</div>
+<footer>
+    © 2025 - Proyecto de Análisis de Datos | Accidentes en Calarcá
+</footer>
 
 </body>
 </html>
+
