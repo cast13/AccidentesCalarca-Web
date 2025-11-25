@@ -81,5 +81,219 @@
         padding: 14px 26px;
         border-radius: 8px;
         text-decoration: none;
-        font-size: 17px
+        font-size: 17px;
+        display: inline-block;
+        margin-top: 15px;
+        transition: 0.3s;
+    }
+    .btn:hover {
+        background: #0b56c4;
+    }
+
+    /* ----- CAJA DE CÓDIGO ----- */
+    pre {
+        background: #0d1117;
+        color: #e6edf3;
+        padding: 20px;
+        border-radius: 10px;
+        overflow-x: auto;
+        font-size: 14px;
+        line-height: 1.5;
+        border: 1px solid #30363d;
+    }
+
+    footer {
+        text-align: center;
+        padding: 20px;
+        background: #112a5a;
+        color: white;
+        margin-top: 40px;
+    }
+
+    /* ---- SLIDER ---- */
+    .slider-container {
+        position: relative;
+        width: 100%;
+        height: 350px;
+        overflow: hidden;
+        border-radius: 12px;
+        margin-top: 20px;
+    }
+
+    .slider {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.5s ease-in-out;
+    }
+
+    .slide {
+        min-width: 100%;
+        height: 100%;
+        display: none;
+    }
+
+    .slide.active {
+        display: block;
+    }
+
+    .slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Controles */
+    .controls {
+        position: absolute;
+        width: 100%;
+        top: 50%;
+        display: flex;
+        justify-content: space-between;
+        padding: 0 15px;
+        transform: translateY(-50%);
+    }
+
+    .controls button {
+        background: rgba(0,0,0,0.4);
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 20px;
+        transition: 0.3s;
+    }
+
+    .controls button:hover {
+        background: rgba(0,0,0,0.7);
+    }
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav>
+    <h2>Accidentes Calarcá</h2>
+    <div>
+        <a href="#proyecto">Proyecto</a>
+        <a href="#galeria">Galería</a>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#codigo">Código</a>
+        <a href="https://github.com/cast13/AccidentesCalarca-Web" target="_blank">GitHub</a>
+    </div>
+</nav>
+
+<div class="container">
+
+<!-- DESCRIPCIÓN DEL PROYECTO -->
+<div class="card" id="proyecto">
+    <h2>Descripción del Proyecto</h2>
+    <p>
+        Este dashboard analiza los <strong>accidentes de tránsito en Calarcá entre 2017 y 2022</strong>, 
+        identificando tendencias, zonas críticas, tipos de siniestros y factores asociados.
+        <br><br>
+        Su objetivo es ofrecer una visualización clara que apoye la toma de decisiones y 
+        contribuya a mejorar la seguridad vial en el municipio.
+    </p>
+</div>
+
+<!-- SLIDER DE IMÁGENES -->
+<div class="card" id="galeria">
+    <h2>Galería de Imágenes</h2>
+    <p>
+        Imágenes libres de derechos que ilustran la importancia de la seguridad vial 
+        y la prevención de accidentes.
+    </p>
+
+    <div class="slider-container">
+        <div class="slider">
+
+            <div class="slide active">
+                <img src="https://images.unsplash.com/photo-1592981881801-5d564d8531ed?auto=format&fit=crop&w=1200&q=80">
+            </div>
+
+            <div class="slide">
+                <img src="https://images.unsplash.com/photo-1602071793831-29f7e86cdc84?auto=format&fit=crop&w=1200&q=80">
+            </div>
+
+            <div class="slide">
+                <img src="https://images.unsplash.com/photo-1602071745267-81362ee44f31?auto=format&fit=crop&w=1200&q=80">
+            </div>
+
+            <div class="slide">
+                <img src="https://images.pexels.com/photos/5255999/pexels-photo-5255999.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940">
+            </div>
+
+        </div>
+
+        <div class="controls">
+            <button class="prev">&#10094;</button>
+            <button class="next">&#10095;</button>
+        </div>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="card" id="dashboard">
+    <h2>Dashboard Interactivo</h2>
+    <iframe 
+        title="Dashboard Accidentes Calarcá 2017-2022"
+        src="https://app.powerbi.com/reportEmbed?reportId=b20bb08b-1182-4258-b6ba-ab7ab6d9c5be&autoAuth=true&ctid=4f1e044d-3d70-4990-b26a-b95f0c642e1a"
+        allowFullScreen="true">
+    </iframe>
+</div>
+
+<!-- CÓDIGO PYTHON -->
+<div class="card" id="codigo">
+    <h2>Código Completo (ETL + API + SQL)</h2>
+    <p>Este es el código del proceso completo desarrollado en Visual Studio Code:</p>
+
+    <pre>
+import requests
+import pandas as pd
+import pyodbc
+# (Tu código completo aquí)
+    </pre>
+
+    <a class="btn" href="codigo.txt" download>Descargar código completo</a>
+</div>
+
+</div>
+
+<footer>
+    © 2025 - Proyecto de Ingeniería | Accidentes de Tránsito en Calarcá | Por Carlos Serrano
+</footer>
+
+<!-- JS DEL SLIDER -->
+<script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll(".slide");
+
+    function showSlide(index) {
+        slides.forEach((slide, i) => {
+            slide.classList.remove("active");
+            if (i === index) slide.classList.add("active");
+        });
+    }
+
+    document.querySelector(".next").addEventListener("click", () => {
+        currentSlide = (currentSlide + 1) % slides.length;
+        showSlide(currentSlide);
+    });
+
+    document.querySelector(".prev").addEventListener("click", () => {
+        currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+        showSlide(currentSlide);
+    });
+
+    setInterval(() => {
+        currentSlide = (currentSlide + 1) % slides.length;
+        showSlide(currentSlide);
+    }, 5000);
+</script>
+
+</body>
+</html>
 
